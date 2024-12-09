@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Wine Quality Classifier";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Wine Quality Predictor</h1>
+    <form id="wineForm">
+        <div class="row">
+            @foreach (var field in new[] {
+                "fixed_acidity", "volatile_acidity", "citric_acid", "residual_sugar", "chlorides",
+                "free_sulfur_dioxide", "total_sulfur_dioxide", "density", "pH", "sulphates", "alcohol"
+            })
+            {
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="@field" class="form-label">@field.Replace("_", " ")</label>
+                        <input type="number" step="0.01" class="form-control" name="@field" id="@field" required>
+                    </div>
+            }
+            <div class="col-md-4 mb-3">
+                <label for="color" class="form-label">Color</label>
+                <select class="form-select" name="color" id="color" required>
+                    <option value="red">Red</option>
+                    <option value="white">White</option>
+                </select>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-primary" onclick="predictQuality()">Predict Quality</button>
+        </div>
+    </form>
+
+    <div id="predictionResult" class="alert alert-info mt-4 d-none" role="alert">
+        The predicted quality of the wine is: <strong id="predictedQuality"></strong>
+    </div>
+</div>
+
+<script>
+    async function predictQuality() {
+        const formData = new FormData(document.getElementById('wineForm'));
+        const data = Object.fromEntries(formData.entries());
+        try {
+            const response = await fetch('/Home/Predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                let qualityText;
+
+                // Визначення тексту залежно від значення quality
+                switch (result.quality) {
+                    case 0:
+                        qualityText = "low";
+                        break;
+                    case 1:
+                        qualityText = "average";
+                        break;
+                    case 2:
+                        qualityText = "high";
+                        break;
+                    case 3:
+                        qualityText = "very high";
+                        break;
+                    default:
+                        qualityText = "unknown";
+                }
+
+                // Вивід результату
+                document.getElementById('predictedQuality').textContent = qualityText;
+                document.getElementById('predictionResult').classList.remove('d-none');
+            } else {
+                alert('Failed to predict wine quality. Please check your inputs.');
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+</script>
+
