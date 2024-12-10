@@ -1,5 +1,4 @@
 using WineML.AI;
-using WineML.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
