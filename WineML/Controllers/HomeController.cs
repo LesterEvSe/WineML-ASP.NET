@@ -29,7 +29,7 @@ namespace WineML.Controllers
         {
             try
             {
-                var wineSample = new Wine
+                var wineSample = new WineMLData
                 {
                     fixed_acidity = wineInput.fixed_acidity,
                     volatile_acidity = wineInput.volatile_acidity,
@@ -42,8 +42,8 @@ namespace WineML.Controllers
                     pH = wineInput.pH,
                     sulphates = wineInput.sulphates,
                     alcohol = wineInput.alcohol,
-                    quality = 0, // Value, needed for predicion
-                    wine_white = wineInput.color == "white" ? 1 : 0
+                    quality = 0, // Value, needed for prediction
+                    white_wine = wineInput.color == "white" ? 1 : 0
                 };
 
                 var classifier = new Classifier();

@@ -4,7 +4,7 @@ using Microsoft.ML.Data;
 
 namespace WineML.Models
 {
-    public class Wine
+    public class WineMLData
     {
         [LoadColumn(0)] public float fixed_acidity { get; set; }
         [LoadColumn(1)] public float volatile_acidity { get; set; }
@@ -18,6 +18,6 @@ namespace WineML.Models
         [LoadColumn(9)] public float sulphates { get; set; }
         [LoadColumn(10)] public float alcohol { get; set; }
         [LoadColumn(11)] public int quality { get; set; } // target. [0; 3] - 0, [4;6] - 1, [7;8] - 2, [9;10] - 3
-        [LoadColumn(12)] public float wine_white { get; set; }
+        [LoadColumn(12)] public float white_wine { get; set; }
     }
 }

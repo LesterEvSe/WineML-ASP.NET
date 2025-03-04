@@ -1,3 +1,4 @@
+using WineML;
 using WineML.AI;
 
 var builder = WebApplication.CreateBuilder(args);
