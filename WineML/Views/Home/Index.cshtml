@@ -11,10 +11,10 @@
                 "free_sulfur_dioxide", "total_sulfur_dioxide", "density", "pH", "sulphates", "alcohol"
             })
             {
-                    <div class="col-md-4 mb-3">
-                        <label asp-for="@field" class="form-label">@field.Replace("_", " ")</label>
-                        <input type="number" step="0.01" class="form-control" name="@field" id="@field" required>
-                    </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="@field" class="form-label">@field.Replace("_", " ")</label>
+                                <input type="number" step="0.01" class="form-control" name="@field" id="@field" required>
+                            </div>
             }
             <div class="col-md-4 mb-3">
                 <label for="color" class="form-label">Color</label>
@@ -23,11 +23,27 @@
                     <option value="white">White</option>
                 </select>
             </div>
+            <div class="col-md-4 mb-3">
+                <label for="quality" class="form-label">Quality</label>
+                <select class="form-select" name="quality" id="quality" required>
+                    <option value="0">Low</option>
+                    <option value="1">Average</option>
+                    <option value="2">High</option>
+                    <option value="3">Very High</option>
+                </select>
+            </div>
         </div>
         <div class="text-center mt-4">
             <button type="button" class="btn btn-primary" onclick="predictQuality()">Predict Quality</button>
+            <button type="button" class="btn btn-success" onclick="addData()">Add Data</button>
+            <button type="button" class="btn btn-warning" onclick="trainModel()">Train</button>
         </div>
     </form>
+
+    <div class="text-center mt-4">
+        <input type="file" id="csvFileInput" class="form-control-file" accept=".csv">
+        <button type="button" class="btn btn-secondary mt-2" onclick="uploadCsv()">Upload CSV</button>
+    </div>
 
     <div id="predictionResult" class="alert alert-info mt-4 d-none" role="alert">
         The predicted quality of the wine is: <strong id="predictedQuality"></strong>
@@ -38,12 +54,11 @@
     async function predictQuality() {
         const formData = new FormData(document.getElementById('wineForm'));
         const data = Object.fromEntries(formData.entries());
+
         try {
             const response = await fetch('/Home/Predict', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
 
@@ -51,25 +66,14 @@
                 const result = await response.json();
                 let qualityText;
 
-                // Визначення тексту залежно від значення quality
                 switch (result.quality) {
-                    case 0:
-                        qualityText = "low";
-                        break;
-                    case 1:
-                        qualityText = "average";
-                        break;
-                    case 2:
-                        qualityText = "high";
-                        break;
-                    case 3:
-                        qualityText = "very high";
-                        break;
-                    default:
-                        qualityText = "unknown";
+                    case 0: qualityText = "low"; break;
+                    case 1: qualityText = "average"; break;
+                    case 2: qualityText = "high"; break;
+                    case 3: qualityText = "very high"; break;
+                    default: qualityText = "unknown";
                 }
 
-                // Вивід результату
                 document.getElementById('predictedQuality').textContent = qualityText;
                 document.getElementById('predictionResult').classList.remove('d-none');
             } else {
@@ -79,5 +83,66 @@
             alert('An error occurred: ' + error.message);
         }
     }
-</script>
 
+    async function trainModel() {
+        try {
+            const response = await fetch('/Home/Retrain', { method: 'POST' });
+
+            if (response.ok) {
+                alert('Model retrained successfully!');
+            } else {
+                alert('Failed to retrain model.');
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+
+    async function addData() {
+        const formData = new FormData(document.getElementById('wineForm'));
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/Home/AddData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Data added successfully!');
+            } else {
+                alert('Failed to add data.');
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+
+
+    async function uploadCsv() {
+        const fileInput = document.getElementById('csvFileInput');
+        if (fileInput.files.length === 0) {
+            alert('Please select a CSV file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/Home/UploadCsv', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                alert('CSV file uploaded and processed successfully!');
+            } else {
+                alert('Failed to upload CSV file.');
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+</script>

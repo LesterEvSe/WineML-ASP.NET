@@ -13,6 +13,7 @@
         public float pH { get; set; }
         public float sulphates { get; set; }
         public float alcohol { get; set; }
+        public int quality { get; set; }
         public string color { get; set; }
     }
 }

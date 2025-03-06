@@ -33,7 +33,7 @@ namespace WineML
     // Singleton DB
     public class DB : DbContext
     {
-        public static DB Instance = new();
+        private static DB Instance => new();
         public DbSet<Wine> Wines { get; set; }
 
         private DB()
@@ -47,15 +47,22 @@ namespace WineML
         }
 
         // LINQ Requests
-        public void AddWine(Wine wine)
+        public static void AddWine(Wine wine)
         {
-            Wines.Add(wine);
-            SaveChanges();
+            Console.WriteLine($"Fixed Acidity: {wine.fixed_acidity}, Volatile Acidity: {wine.volatile_acidity}, " +
+                                 $"Citric Acid: {wine.citric_acid}, Residual Sugar: {wine.residual_sugar}, " +
+                                 $"Chlorides: {wine.chlorides}, Free SO₂: {wine.free_sulfur_dioxide}, " +
+                                 $"Total SO₂: {wine.total_sulfur_dioxide}, Density: {wine.density}, " +
+                                 $"pH: {wine.pH}, Sulphates: {wine.sulphates}, Alcohol: {wine.alcohol}, " +
+                                 $"Quality: {wine.quality}, White Wine: {wine.white_wine}");
+            using var db = new DB();
+            db.Wines.AddRange(wine);
+            db.SaveChanges();
         }
 
         public static void LoadFromCsv(string csvPath, bool init=false)
         {
-            using var db = DB.Instance;
+            using var db = new DB();
             if (init && db.Wines.Count() > 6000)
             {
                 Console.WriteLine($"The table has already been initialized. The current number of instances: {db.Wines.Count()}.");
@@ -72,10 +79,9 @@ namespace WineML
             Console.WriteLine($"Successfully saved {db.Wines.Count()} records to database.");
         }
 
-        public IDataView LoadDataFromDB(MLContext mlContext)
+        public static IDataView LoadDataFromDB(MLContext mlContext)
         {
             using var db = new DB();
-
             List<WineMLData> wines = db.Wines.Select(w => new WineMLData
             {
                 fixed_acidity = w.fixed_acidity,

@@ -6,7 +6,6 @@ namespace WineML.AI;
 class Classifier
 {
     private static ITransformer? model;
-    private static DB db = DB.Instance;
     private static string dataPath = "C:/Users/evzel/source/repos/WineML/WineML/AI/winequality-transformed.csv";
 
     public Classifier()
@@ -39,7 +38,7 @@ class Classifier
     public static void ReInitModel()
     {
         var context = new MLContext();
-        var data = db.LoadDataFromDB(context); // context.Data.LoadFromTextFile<WineMLData>(dataPath, separatorChar: ',', hasHeader: true);
+        var data = DB.LoadDataFromDB(context); // context.Data.LoadFromTextFile<WineMLData>(dataPath, separatorChar: ',', hasHeader: true);
 
         // Concatenate features and map label to key
         // Best 86%
