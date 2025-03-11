@@ -86,12 +86,12 @@
 
     async function trainModel() {
         try {
-            const response = await fetch('/Home/Retrain', { method: 'POST' });
+            const response = await fetch('/Home/Train', { method: 'POST' });
 
             if (response.ok) {
-                alert('Model retrained successfully!');
+                alert('Model trained successfully!');
             } else {
-                alert('Failed to retrain model.');
+                alert('Failed to train model.');
             }
         } catch (error) {
             alert('An error occurred: ' + error.message);

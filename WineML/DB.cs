@@ -38,8 +38,8 @@ namespace WineML
 
         private DB()
         {
-            //Database.EnsureDeleted();
-            Database.EnsureCreated();
+            Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -49,15 +49,10 @@ namespace WineML
         // LINQ Requests
         public static void AddWine(Wine wine)
         {
-            Console.WriteLine($"Fixed Acidity: {wine.fixed_acidity}, Volatile Acidity: {wine.volatile_acidity}, " +
-                                 $"Citric Acid: {wine.citric_acid}, Residual Sugar: {wine.residual_sugar}, " +
-                                 $"Chlorides: {wine.chlorides}, Free SO₂: {wine.free_sulfur_dioxide}, " +
-                                 $"Total SO₂: {wine.total_sulfur_dioxide}, Density: {wine.density}, " +
-                                 $"pH: {wine.pH}, Sulphates: {wine.sulphates}, Alcohol: {wine.alcohol}, " +
-                                 $"Quality: {wine.quality}, White Wine: {wine.white_wine}");
             using var db = new DB();
             db.Wines.AddRange(wine);
             db.SaveChanges();
+            Console.WriteLine($"Now, DB has {db.Wines.Count()} number of instances");
         }
 
         public static void LoadFromCsv(string csvPath, bool init=false)
@@ -75,8 +70,7 @@ namespace WineML
             var wines = csv.GetRecords<Wine>().ToList();
             db.Wines.AddRange(wines);
             db.SaveChanges();
-
-            Console.WriteLine($"Successfully saved {db.Wines.Count()} records to database.");
+            Console.WriteLine($"Successfully saved, now database has {db.Wines.Count()} instances.");
         }
 
         public static IDataView LoadDataFromDB(MLContext mlContext)
@@ -99,6 +93,7 @@ namespace WineML
                 white_wine = w.white_wine
             }).ToList();
 
+            Console.WriteLine($"The table has {wines.Count()} number of instances.");
             return mlContext.Data.LoadFromEnumerable(wines);
         }
 

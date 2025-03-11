@@ -25,7 +25,7 @@ namespace WineML.Controllers
         }
 
         [HttpPost]
-        public IActionResult Retrain()
+        public IActionResult Train()
         {
             Classifier.ReInitModel();
             return Ok(new { message = "Model retrained successfully" });
