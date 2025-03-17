@@ -26,7 +26,7 @@ namespace WineML
         public required float pH { get; set; }
         public required float sulphates { get; set; }
         public required float alcohol { get; set; }
-        public required int quality { get; set; } // target. [0; 3] - 0, [4;6] - 1, [7;8] - 2, [9;10] - 3
+        public required int quality { get; set; }
         public required float white_wine { get; set; }
     }
 
@@ -38,19 +38,19 @@ namespace WineML
 
         private DB()
         {
-            Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            //Database.EnsureDeleted();
+            Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=ViruseWar;Trusted_Connection=True;Encrypt=False");
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Wine;Trusted_Connection=True;Encrypt=False");
         }
 
         // LINQ Requests
         public static void AddWine(Wine wine)
         {
             using var db = new DB();
-            db.Wines.AddRange(wine);
+            db.Wines.Add(wine);
             db.SaveChanges();
             Console.WriteLine($"Now, DB has {db.Wines.Count()} number of instances");
         }
@@ -58,7 +58,7 @@ namespace WineML
         public static void LoadFromCsv(string csvPath, bool init=false)
         {
             using var db = new DB();
-            if (init && db.Wines.Count() > 6000)
+            if (init && db.Wines.Count() > 400)
             {
                 Console.WriteLine($"The table has already been initialized. The current number of instances: {db.Wines.Count()}.");
                 return;

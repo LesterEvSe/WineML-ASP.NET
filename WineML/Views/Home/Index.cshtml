@@ -11,10 +11,10 @@
                 "free_sulfur_dioxide", "total_sulfur_dioxide", "density", "pH", "sulphates", "alcohol"
             })
             {
-                            <div class="col-md-4 mb-3">
-                                <label asp-for="@field" class="form-label">@field.Replace("_", " ")</label>
-                                <input type="number" step="0.01" class="form-control" name="@field" id="@field" required>
-                            </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="@field" class="form-label">@field.Replace("_", " ")</label>
+                    <input type="number" step="0.01" class="form-control" name="@field" id="@field" required>
+                </div>
             }
             <div class="col-md-4 mb-3">
                 <label for="color" class="form-label">Color</label>

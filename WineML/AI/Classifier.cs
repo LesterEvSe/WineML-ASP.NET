@@ -1,18 +1,15 @@
 ﻿using WineML.Models;
 using Microsoft.ML;
-using Microsoft.ML.Data;
 
 namespace WineML.AI;
 class Classifier
 {
     private static ITransformer? model;
-    private static string dataPath = "C:/Users/evzel/source/repos/WineML/WineML/AI/winequality-transformed.csv";
 
     public Classifier()
     {
-        DB.LoadFromCsv("C:/Users/evzel/source/repos/WineML/WineML/AI/winequality-transformed.csv", true);
-        //DB.PrintAllWines();
-     
+        DB.LoadFromCsv("C:/Users/evzel/source/repos/WineML/WineML/AI/winequality-init.csv", true);
+
         if (model == null) {
             ReInitModel();
         }
@@ -38,7 +35,7 @@ class Classifier
     public static void ReInitModel()
     {
         var context = new MLContext();
-        var data = DB.LoadDataFromDB(context); // context.Data.LoadFromTextFile<WineMLData>(dataPath, separatorChar: ',', hasHeader: true);
+        var data = DB.LoadDataFromDB(context);
 
         // Concatenate features and map label to key
         // Best 86%
@@ -64,6 +61,5 @@ class Classifier
         // Output metrics
         Console.WriteLine($"Log Loss: {metrics.LogLoss:F5}");
         Console.WriteLine($"Accuracy: {metrics.MicroAccuracy:F5}"); // average metric for all classes
-        // Console.WriteLine($"Macro Accuracy: {metrics.MacroAccuracy}"); // metrics for each class
     }
 }
